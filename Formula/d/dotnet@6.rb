@@ -6,6 +6,7 @@ class DotnetAT6 < Formula
       tag:      "v6.0.133",
       revision: "48ad8f7176f00900ff49df9fb936bc7c8c79d345"
   license "MIT"
+  revision 1
 
   bottle do
     sha256 cellar: :any, arm64_sonoma:   "2f732d33c49d2549ca9bd05907d4e86d7c54cb5264b9bc27844118cde98fe5ea"
@@ -23,7 +24,7 @@ class DotnetAT6 < Formula
   depends_on "cmake" => :build
   depends_on "pkg-config" => :build
   depends_on "python@3.12" => :build
-  depends_on "icu4c"
+  depends_on "icu4c@75"
   depends_on "openssl@3"
 
   uses_from_macos "llvm" => :build
@@ -63,7 +64,8 @@ class DotnetAT6 < Formula
 
   def install
     if OS.linux?
-      ENV.append_path "LD_LIBRARY_PATH", Formula["icu4c"].opt_lib
+      icu4c = deps.map(&:to_formula).find { |f| f.name.match?(/^icu4c@\d+$/) }
+      ENV.append_path "LD_LIBRARY_PATH", icu4c.opt_lib if OS.linux?
       ENV.append_to_cflags "-I#{Formula["krb5"].opt_include}"
       ENV.append_to_cflags "-I#{Formula["zlib"].opt_include}"
     end
