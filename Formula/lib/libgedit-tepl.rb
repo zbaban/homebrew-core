@@ -4,6 +4,7 @@ class LibgeditTepl < Formula
   url "https://gitlab.gnome.org/World/gedit/libgedit-tepl/-/archive/6.10.0/libgedit-tepl-6.10.0.tar.bz2"
   sha256 "bfaf68a4c81b7e32ff69d102dad1d656c49b5ef8570db15327a3c5479c8c3164"
   license "LGPL-2.1-or-later"
+  revision 1
   head "https://gitlab.gnome.org/World/gedit/libgedit-tepl.git", branch: "main"
 
   # https://gitlab.gnome.org/swilmet/tepl/-/blob/main/docs/more-information.md
@@ -32,7 +33,7 @@ class LibgeditTepl < Formula
   depends_on "cairo"
   depends_on "glib"
   depends_on "gtk+3"
-  depends_on "icu4c"
+  depends_on "icu4c@75"
   depends_on "libgedit-amtk"
   depends_on "libgedit-gfls"
   depends_on "libgedit-gtksourceview"
@@ -59,7 +60,8 @@ class LibgeditTepl < Formula
       }
     EOS
 
-    ENV.prepend_path "PKG_CONFIG_PATH", Formula["icu4c"].opt_lib/"pkgconfig" if OS.mac?
+    icu4c = deps.map(&:to_formula).find { |f| f.name.match?(/^icu4c@\d+$/) }
+    ENV.prepend_path "PKG_CONFIG_PATH", icu4c.opt_lib/"pkgconfig"
     flags = shell_output("pkg-config --cflags --libs libgedit-tepl-6").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
