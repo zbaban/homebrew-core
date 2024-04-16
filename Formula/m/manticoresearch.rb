@@ -4,7 +4,7 @@ class Manticoresearch < Formula
   url "https://github.com/manticoresoftware/manticoresearch/archive/refs/tags/6.2.12.tar.gz"
   sha256 "272d9e3cc162b1fe08e98057c9cf6c2f90df0c3819037e0dafa200e5ff71cef9"
   license "GPL-2.0-only" # License changes in the next release and must be removed from formula_license_mismatches
-  revision 1
+  revision 2
   version_scheme 1
   head "https://github.com/manticoresoftware/manticoresearch.git", branch: "master"
 
@@ -26,7 +26,7 @@ class Manticoresearch < Formula
 
   depends_on "boost" => :build
   depends_on "cmake" => :build
-  depends_on "icu4c"
+  depends_on "icu4c@75"
   depends_on "libpq"
   depends_on "mysql-client@8.0"
   depends_on "openssl@3"
@@ -41,8 +41,10 @@ class Manticoresearch < Formula
   fails_with gcc: "5"
 
   def install
+    icu4c = deps.map(&:to_formula).find { |f| f.name.match?(/^icu4c@\d+$/) }
+
     # ENV["DIAGNOSTIC"] = "1"
-    ENV["ICU_ROOT"] = Formula["icu4c"].opt_prefix.to_s
+    ENV["ICU_ROOT"] = icu4c.opt_prefix.to_s
     ENV["OPENSSL_ROOT_DIR"] = Formula["openssl"].opt_prefix.to_s
     ENV["MYSQL_ROOT_DIR"] = Formula["mysql-client@8.0"].opt_prefix.to_s
     ENV["PostgreSQL_ROOT"] = Formula["libpq"].opt_prefix.to_s
