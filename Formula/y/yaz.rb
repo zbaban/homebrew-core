@@ -7,6 +7,7 @@ class Yaz < Formula
   mirror "https://ftp.indexdata.com/pub/yaz/yaz-5.34.1.tar.gz"
   sha256 "c7fd8e0222b3b0d1115ad8e7a2ee67be7a2807624d61d5b71854bf5e167ab7a9"
   license "BSD-3-Clause"
+  revision 1
 
   # The latest version text is currently omitted from the homepage for this
   # software, so we have to check the related directory listing page.
@@ -39,7 +40,7 @@ class Yaz < Formula
 
   depends_on "pkg-config" => :build
   depends_on "gnutls"
-  depends_on "icu4c"
+  depends_on "icu4c@75"
   depends_on "readline" # Possible opportunistic linkage. TODO: Check if this can be removed.
 
   uses_from_macos "libxml2"
@@ -58,9 +59,10 @@ class Yaz < Formula
 
     # Replace dependencies' cellar paths, which can break build for dependents
     # (like `metaproxy` and `zebra`) after a dependency is version/revision bumped
+    icu4c = deps.map(&:to_formula).find { |f| f.name.match?(/^icu4c@\d+$/) }
     inreplace bin/"yaz-config" do |s|
       s.gsub! Formula["gnutls"].prefix.realpath, Formula["gnutls"].opt_prefix
-      s.gsub! Formula["icu4c"].prefix.realpath, Formula["icu4c"].opt_prefix
+      s.gsub! icu4c.prefix.realpath, icu4c.opt_prefix
     end
     unless OS.mac?
       inreplace [bin/"yaz-config", lib/"pkgconfig/yaz.pc"] do |s|
