@@ -2,7 +2,7 @@ class Tectonic < Formula
   desc "Modernized, complete, self-contained TeX/LaTeX engine"
   homepage "https://tectonic-typesetting.github.io/"
   license "MIT"
-  revision 1
+  revision 2
   head "https://github.com/tectonic-typesetting/tectonic.git", branch: "master"
 
   stable do
@@ -13,6 +13,12 @@ class Tectonic < Formula
     patch do
       url "https://github.com/tectonic-typesetting/tectonic/commit/6b49ca8db40aaca29cb375ce75add3e575558375.patch?full_index=1"
       sha256 "86e5343d1ce3e725a7dab0227003dddd09dcdd5913eb9e5866612cb77962affb"
+    end
+
+    # Backport fix for icu4c 75
+    patch do
+      url "https://github.com/tectonic-typesetting/tectonic/commit/d260961426b01f7643ba0f35f493bdb671eeaf3f.patch?full_index=1"
+      sha256 "7d2014a1208569a63fca044b8957e2d2256fa169ea2ebe562aed6f490eec17d1"
     end
   end
 
@@ -40,13 +46,11 @@ class Tectonic < Formula
   depends_on "freetype"
   depends_on "graphite2"
   depends_on "harfbuzz"
-  depends_on "icu4c"
+  depends_on "icu4c@75"
   depends_on "libpng"
   depends_on "openssl@3"
 
   def install
-    ENV.cxx11
-
     if OS.mac?
       ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version.to_s # needed for CLT-only builds
       ENV.delete("HOMEBREW_SDKROOT") if MacOS.version == :high_sierra
