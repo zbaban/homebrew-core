@@ -4,7 +4,7 @@ class Flann < Formula
   url "https://github.com/flann-lib/flann/archive/refs/tags/1.9.2.tar.gz"
   sha256 "e26829bb0017f317d9cc45ab83ddcb8b16d75ada1ae07157006c1e7d601c8824"
   license "BSD-3-Clause"
-  revision 2
+  revision 3
 
   bottle do
     sha256 cellar: :any,                 arm64_sonoma:   "95cc1c8ebe8089d9f3b3cddcc4121b8758f27746f54ccb2a4e14120d31bced00"
