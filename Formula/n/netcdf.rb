@@ -4,7 +4,7 @@ class Netcdf < Formula
   url "https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.9.2.tar.gz"
   sha256 "bc104d101278c68b303359b3dc4192f81592ae8640f1aee486921138f7f88cb7"
   license "BSD-3-Clause"
-  revision 1
+  revision 2
   head "https://github.com/Unidata/netcdf-c.git", branch: "main"
 
   livecheck do
@@ -51,6 +51,10 @@ class Netcdf < Formula
     # Remove shim paths
     inreplace [bin/"nc-config", lib/"pkgconfig/netcdf.pc", lib/"cmake/netCDF/netCDFConfig.cmake",
                lib/"libnetcdf.settings"], Superenv.shims_path/ENV.cc, ENV.cc
+
+    # Fix bad flags, breaks vtk build
+    # https://github.com/Homebrew/homebrew-core/pull/170959#discussion_r1744656193
+    inreplace lib/"cmake/netCDF/netCDFTargets.cmake", "hdf5_hl-shared;hdf5-shared;", "hdf5_hl;hdf5;"
   end
 
   test do
