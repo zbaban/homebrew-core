@@ -2125,6 +2125,7 @@ py3cairo
 pybind11
 pycodestyle
 pycparser
+pydantic
 pyenv
 pyenv-virtualenv
 pyflow
