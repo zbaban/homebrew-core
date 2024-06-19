@@ -1468,6 +1468,7 @@ libfido2
 libfixbuf
 libfontenc
 libfs
+libgcrypt
 libgedit-amtk
 libgedit-gfls
 libgedit-gtksourceview
