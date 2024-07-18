@@ -1,10 +1,9 @@
 class OpenMpi < Formula
   desc "High performance message passing library"
   homepage "https://www.open-mpi.org/"
-  url "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.3.tar.bz2"
-  sha256 "990582f206b3ab32e938aa31bbf07c639368e4405dca196fabe7f0f76eeda90b"
+  url "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.5.tar.bz2"
+  sha256 "6588d57c0a4bd299a24103f4e196051b29e8b55fbda49e11d5b3d32030a32776"
   license "BSD-3-Clause"
-  revision 1
 
   livecheck do
     url :homepage
@@ -23,6 +22,7 @@ class OpenMpi < Formula
 
   head do
     url "https://github.com/open-mpi/ompi.git", branch: "main"
+
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool" => :build
@@ -36,34 +36,24 @@ class OpenMpi < Formula
   conflicts_with "mpich", because: "both install MPI compiler wrappers"
 
   def install
-    if OS.mac?
-      # Otherwise libmpi_usempi_ignore_tkr gets built as a static library
-      ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version
+    ENV.runtime_cpu_detection
+    # Otherwise libmpi_usempi_ignore_tkr gets built as a static library
+    ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version if OS.mac?
 
-      # Work around asm incompatibility with new linker (FB13194320)
-      # https://github.com/open-mpi/ompi/issues/12427
-      ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.clang_build_version >= 1500
-    end
+    # Remove bundled copies of libraries that shouldn't be used
+    rm_r "3rd-party/openpmix"
+    rm Dir["3rd-party/{hwloc,libevent}*"]
 
     # Avoid references to the Homebrew shims directory
     inreplace_files = %w[
       ompi/tools/ompi_info/param.c
       oshmem/tools/oshmem_info/param.c
     ]
-    inreplace_files_cc = %w[
-      3rd-party/openpmix/src/tools/pmix_info/support.c
-      3rd-party/prrte/src/tools/prte_info/param.c
-    ]
-
     cxx = OS.linux? ? "g++" : ENV.cxx
-    inreplace inreplace_files, "OMPI_CXX_ABSOLUTE", "\"#{cxx}\""
-
     cc = OS.linux? ? "gcc" : ENV.cc
-    inreplace inreplace_files, /(OPAL|PMIX)_CC_ABSOLUTE/, "\"#{cc}\""
-    inreplace inreplace_files_cc, /(PMIX|PRTE)_CC_ABSOLUTE/, "\"#{cc}\""
-
-    ENV.cxx11
-    ENV.runtime_cpu_detection
+    inreplace inreplace_files, "OMPI_CXX_ABSOLUTE", "\"#{cxx}\""
+    inreplace inreplace_files, "OPAL_CC_ABSOLUTE", "\"#{cc}\""
+    inreplace "3rd-party/prrte/src/tools/prte_info/param.c", "PRTE_CC_ABSOLUTE", "\"#{cc}\""
 
     args = %W[
       --disable-silent-rules
@@ -77,12 +67,8 @@ class OpenMpi < Formula
     ]
     args << "--with-platform-optimized" if build.head?
 
-    # Work around asm incompatibility with new linker (FB13194320)
-    # https://github.com/open-mpi/ompi/issues/11935
-    args << "--with-wrapper-fcflags=-Wl,-ld_classic" if DevelopmentTools.clang_build_version >= 1500
-
     system "./autogen.pl", "--force" if build.head?
-    system "./configure", *std_configure_args, *args
+    system "./configure", *args, *std_configure_args
     system "make", "all"
     system "make", "check"
     system "make", "install"
