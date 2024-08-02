@@ -2,8 +2,8 @@ class Openj9 < Formula
   desc "High performance, scalable, Java virtual machine"
   homepage "https://www.eclipse.org/openj9/"
   url "https://github.com/eclipse-openj9/openj9.git",
-      tag:      "openj9-0.45.0",
-      revision: "0863e24b1d3f1637a418c59435c514116444106c"
+      tag:      "openj9-0.46.0",
+      revision: "1a6f6128aa2f639de1e33cae77a31f474ba6b1a9"
   license any_of: [
     "EPL-2.0",
     "Apache-2.0",
@@ -68,30 +68,30 @@ class Openj9 < Formula
   resource "boot-jdk" do
     on_macos do
       on_arm do
-        url "https://github.com/AdoptOpenJDK/semeru22-binaries/releases/download/jdk-22.0.1%2B8_openj9-0.45.0/ibm-semeru-open-jdk_aarch64_mac_22.0.1_8_openj9-0.45.0.tar.gz"
-        sha256 "623cc15daa3b4c7f21d47f225c94a163e2261074cc3c11f30d2938fc249b9355"
+        url "https://github.com/AdoptOpenJDK/semeru22-binaries/releases/download/jdk-22.0.2%2B9_openj9-0.46.0/ibm-semeru-open-jdk_aarch64_mac_22.0.2_9_openj9-0.46.0.tar.gz"
+        sha256 "b2018fd12ba90c0e030b4f499b0126360ebcac62042257df8c49b3fedf5979f9"
       end
       on_intel do
-        url "https://github.com/AdoptOpenJDK/semeru22-binaries/releases/download/jdk-22.0.1%2B8_openj9-0.45.0/ibm-semeru-open-jdk_x64_mac_22.0.1_8_openj9-0.45.0.tar.gz"
-        sha256 "f0e459df70b5a3c8fc0abc099d5c06a596da40b95f8226d76474516a646a3861"
+        url "https://github.com/AdoptOpenJDK/semeru22-binaries/releases/download/jdk-22.0.2%2B9_openj9-0.46.0/ibm-semeru-open-jdk_x64_mac_22.0.2_9_openj9-0.46.0.tar.gz"
+        sha256 "24b49444a11f3e6a91e6f5dd2f298ea64da0f7953016b99e53cdb86e86d392eb"
       end
     end
     on_linux do
-      url "https://github.com/AdoptOpenJDK/semeru22-binaries/releases/download/jdk-22.0.1%2B8_openj9-0.45.0/ibm-semeru-open-jdk_x64_linux_22.0.1_8_openj9-0.45.0.tar.gz"
-      sha256 "6e54d984bc0c058ffb7a604810dfffba210d79e12855e5c61e9295fedeff32db"
+      url "https://github.com/AdoptOpenJDK/semeru22-binaries/releases/download/jdk-22.0.2%2B9_openj9-0.46.0/ibm-semeru-open-jdk_x64_linux_22.0.2_9_openj9-0.46.0.tar.gz"
+      sha256 "b644d099fdacf660c627c6fda09ee5d680611f3195f8cebc1588b410e85cc9f0"
     end
   end
 
   resource "omr" do
     url "https://github.com/eclipse-openj9/openj9-omr.git",
-        tag:      "openj9-0.45.0",
-        revision: "254af5a0452934f62e3253c5565b183c682d3495"
+        tag:      "openj9-0.46.0",
+        revision: "840a9adba4548aa546e36c97a1150b7306a7e07b"
   end
 
   resource "openj9-openjdk-jdk" do
     url "https://github.com/ibmruntimes/openj9-openjdk-jdk22.git",
-        tag:      "openj9-0.45.0",
-        revision: "980fc841b6b683f31a8fde962b63dbd9ca97bd6a"
+        tag:      "openj9-0.46.0",
+        revision: "9cce8bf88aad368573383e617c203ca7f265f4ab"
   end
 
   def install
@@ -162,6 +162,10 @@ class Openj9 < Formula
       jdk /= "openj9.jdk/Contents/Home"
       rm jdk/"lib/src.zip"
       rm_r(Dir.glob(jdk/"**/*.dSYM"))
+
+      # Fix missing rpath issue
+      MachO::Tools.add_rpath(libexec/"openj9.jdk/Contents/Home/lib/lible.dylib",
+                             opt_libexec/"openj9.jdk/Contents/Home/lib")
     else
       libexec.install Dir["build/linux-x86_64-server-release/images/jdk/*"]
     end
