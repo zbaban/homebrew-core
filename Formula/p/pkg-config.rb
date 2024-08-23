@@ -1,12 +1,12 @@
 class PkgConfig < Formula
   desc "Manage compile and link flags for libraries"
-  homepage "https://freedesktop.org/wiki/Software/pkg-config/"
+  homepage "https://www.freedesktop.org/wiki/Software/pkg-config/"
   url "https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz"
   mirror "http://fresh-center.net/linux/misc/pkg-config-0.29.2.tar.gz"
   mirror "http://fresh-center.net/linux/misc/legacy/pkg-config-0.29.2.tar.gz"
   sha256 "6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591"
   license "GPL-2.0-or-later"
-  revision 3
+  revision 4
 
   livecheck do
     url "https://pkg-config.freedesktop.org/releases/"
@@ -28,11 +28,11 @@ class PkgConfig < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "3d9b8bf9b7b4bd08086be1104e3e18afb1c437dfaca03e6e7df8f2710b9c1c1a"
   end
 
-  conflicts_with "pkgconf", because: "both install `pkg.m4` file"
-
   # FIXME: The bottle is mistakenly considered relocatable on Linux.
   # See https://github.com/Homebrew/homebrew-core/pull/85032.
   pour_bottle? only_if: :default_prefix
+
+  depends_on "pkg.m4"
 
   def install
     pc_path = %W[
@@ -65,6 +65,9 @@ class PkgConfig < Formula
                           "--with-system-include-path=#{system_include_path}"
     system "make"
     system "make", "install"
+
+    # Move `pkg.m4` into libexec as using copy from formula. Keep to make sure identical.
+    libexec.install share/"aclocal/pkg.m4"
   end
 
   test do
@@ -86,5 +89,6 @@ class PkgConfig < Formula
     assert_equal "1.0.0\n", shell_output("#{bin}/pkg-config --modversion foo")
     assert_equal "-lfoo\n", shell_output("#{bin}/pkg-config --libs foo")
     assert_equal "-I/usr/include/foo\n", shell_output("#{bin}/pkg-config --cflags foo")
+    assert_equal (Formula["pkg.m4"].share/"aclocal/pkg.m4").read, (libexec/"pkg.m4").read
   end
 end
