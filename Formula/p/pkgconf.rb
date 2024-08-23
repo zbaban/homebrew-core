@@ -4,6 +4,7 @@ class Pkgconf < Formula
   url "https://distfiles.ariadne.space/pkgconf/pkgconf-2.3.0.tar.xz"
   sha256 "3a9080ac51d03615e7c1910a0a2a8df08424892b5f13b0628a204d3fcce0ea8b"
   license "ISC"
+  revision 1
 
   livecheck do
     url "https://distfiles.ariadne.space/pkgconf/"
@@ -28,7 +29,7 @@ class Pkgconf < Formula
     depends_on "libtool" => :build
   end
 
-  conflicts_with "pkg-config", because: "both install `pkg.m4` file"
+  depends_on "pkg.m4"
 
   def install
     if build.head?
@@ -36,27 +37,53 @@ class Pkgconf < Formula
       system "./autogen.sh"
     end
 
+    system_prefix = "/usr"
     pc_path = %W[
       #{HOMEBREW_PREFIX}/lib/pkgconfig
       #{HOMEBREW_PREFIX}/share/pkgconfig
     ]
     pc_path << if OS.mac?
-      pc_path << "/usr/local/lib/pkgconfig"
+      system_prefix = "#{MacOS.sdk_path_if_needed}/usr"
+
+      pc_path << "/usr/local/lib/pkgconfig" if HOMEBREW_PREFIX.to_s != "/usr/local"
       pc_path << "/usr/lib/pkgconfig"
       "#{HOMEBREW_LIBRARY}/Homebrew/os/mac/pkgconfig/#{MacOS.version}"
     else
       "#{HOMEBREW_LIBRARY}/Homebrew/os/linux/pkgconfig"
     end
 
-    pc_path = pc_path.uniq.join(File::PATH_SEPARATOR)
-
-    configure_args = std_configure_args + %W[
-      --with-pkg-config-dir=#{pc_path}
+    args = %W[
+      --with-pkg-config-dir=#{pc_path.uniq.join(File::PATH_SEPARATOR)}
+      --with-personality-dir=#{HOMEBREW_PREFIX}/share/pkgconfig/personality.d:#{etc}/pkgconfig/personality.d
+      --with-system-includedir=#{HOMEBREW_PREFIX}/include:#{system_prefix}/include
+      --with-system-libdir=#{HOMEBREW_PREFIX}/lib:#{system_prefix}/lib
+      --disable-silent-rules
     ]
 
-    system "./configure", *configure_args
+    system "./configure", *args, *std_configure_args
     system "make"
     system "make", "install"
+
+    # Move `pkg.m4` into libexec to make it easier for migration to `pkgconf`
+    libexec.install share/"aclocal/pkg.m4"
+
+    # TODO: Consider making `pkgconf` a drop-in replacement to `pkg-config` by adding
+    # symlink and restoring conflicts. Similar to Debian, Fedora, ArchLinux and MacPorts.
+    # Alternatively can keep separate non-conflicting commands and update `pkg.m4` to use
+    # `pkgconf` copy after sufficiently migrated.
+    # Ref: https://github.com/pkgconf/pkgconf/#pkg-config-symlink
+    # Ref: https://salsa.debian.org/debian/pkgconf/-/blob/debian/unstable/debian/pkgconf.links?ref_type=heads
+    #
+    # bin.install_symlink "pkgconf" => "pkg-config"
+    # man1.install_symlink "pkgconf.1" => "pkg-config.1"
+  end
+
+  def caveats
+    <<~EOS
+      To allow easier migration from `pkg-config` to `pkgconf`, the `pkgconf` formula
+      uses `pkg-config`'s pkg.m4 to avoid conflict. If you need the copy from `pkgconf`,
+      then it is available at #{libexec}/pkg.m4
+    EOS
   end
 
   test do
