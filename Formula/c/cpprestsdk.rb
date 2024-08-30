@@ -6,6 +6,7 @@ class Cpprestsdk < Formula
       tag:      "v2.10.19",
       revision: "411a109150b270f23c8c97fa4ec9a0a4a98cdecf"
   license "MIT"
+  revision 1
   head "https://github.com/Microsoft/cpprestsdk.git", branch: "development"
 
   bottle do
@@ -44,8 +45,8 @@ class Cpprestsdk < Formula
     system ENV.cxx, "test.cc", "-std=c++11",
                     "-I#{Formula["boost"].include}", "-I#{Formula["openssl@3"].include}", "-I#{include}",
                     "-L#{Formula["boost"].lib}", "-L#{Formula["openssl@3"].lib}", "-L#{lib}",
-                    "-lssl", "-lcrypto", "-lboost_random-mt", "-lboost_chrono-mt", "-lboost_thread-mt",
-                    "-lboost_system-mt", "-lboost_filesystem-mt", "-lcpprest",
+                    "-lssl", "-lcrypto", "-lboost_random", "-lboost_chrono", "-lboost_thread",
+                    "-lboost_system", "-lboost_filesystem", "-lcpprest",
                     "-o", "test_cpprest"
     assert_match "<title>Example Domain</title>", shell_output("./test_cpprest")
   end
