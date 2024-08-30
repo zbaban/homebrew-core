@@ -4,7 +4,7 @@ class AzureStorageCpp < Formula
   url "https://github.com/Azure/azure-storage-cpp/archive/refs/tags/v7.5.0.tar.gz"
   sha256 "446a821d115949f6511b7eb01e6a0e4f014b17bfeba0f3dc33a51750a9d5eca5"
   license "Apache-2.0"
-  revision 10
+  revision 11
 
   bottle do
     sha256 cellar: :any,                 arm64_sonoma:   "88c8ce8dd3036ecb8d825e45e4f540d3f85812a5551adbdff2f3e633a14971b2"
@@ -58,7 +58,7 @@ class AzureStorageCpp < Formula
              "-L#{Formula["cpprestsdk"].lib}",
              "-L#{Formula["openssl@3"].lib}",
              "-L#{lib}",
-             "-lcpprest", "-lboost_system-mt", "-lssl", "-lcrypto", "-lazurestorage"]
+             "-lcpprest", "-lboost_system", "-lssl", "-lcrypto", "-lazurestorage"]
     flags << "-stdlib=libc++" if OS.mac?
     system ENV.cxx, "-o", "test_azurestoragecpp", "test.cpp", *flags
     system "./test_azurestoragecpp"
