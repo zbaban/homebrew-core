@@ -1637,7 +1637,6 @@ makedepend
 makensis
 makepkg
 mako
-man-db
 manifest-tool
 mantra
 mapcidr
@@ -2786,7 +2785,6 @@ vsh
 vtclock
 vte3
 vtk
-vttest
 vue-cli
 vulkan-extensionlayer
 vulkan-volk
@@ -2872,7 +2870,6 @@ xorgproto
 xplr
 xq
 xray
-xrootd
 xsimd
 xterm
 xwin
