@@ -43,7 +43,7 @@ class YouGet < Formula
   end
 
   test do
-    system bin/"you-get", "--info", "https://youtu.be/he2a4xK8ctk"
+    system bin/"you-get", "--info", "https://youtu.be/he2a4xK8ctk", "--debug"
 
     assert_match version.to_s, shell_output("#{bin}/you-get --version 2>&1")
   end
