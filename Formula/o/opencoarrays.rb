@@ -4,7 +4,7 @@ class Opencoarrays < Formula
   url "https://github.com/sourceryinstitute/OpenCoarrays/releases/download/2.10.2/OpenCoarrays-2.10.2.tar.gz"
   sha256 "e13f0dc54b966b0113deed7f407514d131990982ad0fe4dea6b986911d26890c"
   license "BSD-3-Clause"
-  revision 4
+  revision 5
   head "https://github.com/sourceryinstitute/opencoarrays.git", branch: "main"
 
   bottle do
@@ -25,6 +25,12 @@ class Opencoarrays < Formula
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
+
+    # Replace `open-mpi` Cellar path that breaks on `open-mpi` version/revision bumps.
+    # CMake FindMPI uses REALPATH so there isn't a clean way to handle during generation.
+    openmpi = Formula["open-mpi"]
+    inreplace_files = [bin/"caf", lib/"cmake/opencoarrays/OpenCoarraysTargets.cmake"]
+    inreplace inreplace_files, openmpi.prefix.realpath, openmpi.opt_prefix
   end
 
   test do
@@ -50,6 +56,6 @@ class Opencoarrays < Formula
     EOS
     system bin/"caf", "tally.f90", "-o", "tally"
     system bin/"cafrun", "-np", "3", "--oversubscribe", "./tally"
-    assert_match Formula["open-mpi"].lib.realpath.to_s, shell_output("#{bin}/caf --show")
+    assert_match Formula["open-mpi"].opt_lib.to_s, shell_output("#{bin}/caf --show")
   end
 end
