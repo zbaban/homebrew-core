@@ -36,11 +36,14 @@ class BulkExtractor < Formula
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
 
+  on_macos do
+    depends_on "abseil"
+  end
+
   def install
     system "./bootstrap.sh" if build.head?
     # Disable RAR to avoid problematic UnRAR license
-    system "./configure", *std_configure_args, "--disable-rar", "--disable-silent-rules"
-    system "make"
+    system "./configure", "--disable-rar", "--disable-silent-rules", *std_configure_args
     system "make", "install"
 
     # Install documentation
