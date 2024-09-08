@@ -23,6 +23,7 @@ class Awk < Formula
   end
 
   def install
+    ENV.O3
     system "make", "CC=#{ENV.cc}", "CFLAGS=#{ENV.cflags}"
     bin.install "a.out" => "awk"
     man1.install "awk.1"
