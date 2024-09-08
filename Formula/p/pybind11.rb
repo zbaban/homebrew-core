@@ -11,13 +11,8 @@ class Pybind11 < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "32db552c7241a9a94ecb052c054a5da1a8e4bf2095ec621f52b90a4a366acef5"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "32db552c7241a9a94ecb052c054a5da1a8e4bf2095ec621f52b90a4a366acef5"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "32db552c7241a9a94ecb052c054a5da1a8e4bf2095ec621f52b90a4a366acef5"
-    sha256 cellar: :any_skip_relocation, sonoma:         "f20f6f224a7d18ea56c93b6e8ee9eebcea956d5a471190a3bd790f83aedbfee2"
-    sha256 cellar: :any_skip_relocation, ventura:        "f20f6f224a7d18ea56c93b6e8ee9eebcea956d5a471190a3bd790f83aedbfee2"
-    sha256 cellar: :any_skip_relocation, monterey:       "f20f6f224a7d18ea56c93b6e8ee9eebcea956d5a471190a3bd790f83aedbfee2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "32db552c7241a9a94ecb052c054a5da1a8e4bf2095ec621f52b90a4a366acef5"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "60413ac82c90391d1ec75248efe6b31155fd1109590a92417d4df78d78cc4729"
   end
 
   depends_on "cmake" => :build
