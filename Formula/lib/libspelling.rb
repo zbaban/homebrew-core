@@ -1,8 +1,8 @@
 class Libspelling < Formula
   desc "Spellcheck library for GTK 4"
   homepage "https://gitlab.gnome.org/GNOME/libspelling"
-  url "https://gitlab.gnome.org/GNOME/libspelling/-/archive/0.2.1/libspelling-0.2.1.tar.bz2"
-  sha256 "5393a9b93fda445598348a47c42d1ad13586c0bcf35dfd257afd613fd31812c1"
+  url "https://gitlab.gnome.org/GNOME/libspelling/-/archive/0.4.0/libspelling-0.4.0.tar.bz2"
+  sha256 "4d2818ffaf328800ca039efe96c53dacccf3295837fdfcd3cfa6d673b59aac2f"
   license "LGPL-2.1-or-later"
 
   bottle do
@@ -37,7 +37,7 @@ class Libspelling < Formula
   end
 
   def install
-    system "meson", "setup", "build", "-Ddocs=false", *std_meson_args
+    system "meson", "setup", "build", "-Ddocs=false", "-Dsysprof=false", *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
     system "meson", "install", "-C", "build"
   end
