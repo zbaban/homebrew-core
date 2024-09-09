@@ -53,9 +53,8 @@ class Upscaledb < Formula
   def install
     ENV.cxx11
 
-    # Avoid references to Homebrew shims
-    ENV["SED"] = "sed"
-
+    # Workaround for new versions of boost
+    ENV.append_to_cflags "-DBOOST_TIMER_ENABLE_DEPRECATED"
     system "./bootstrap.sh"
 
     simd_arg = Hardware::CPU.intel? ? [] : ["--disable-simd"]
