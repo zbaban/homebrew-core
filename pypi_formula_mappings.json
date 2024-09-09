@@ -675,6 +675,11 @@
   "pythran": {
     "exclude_packages": ["numpy"]
   },
+  "pytorch": {
+    "package_name": "torch[opt-einsum]",
+    "extra_packages": ["pyyaml"],
+    "exclude_packages": ["numpy"]
+  },
   "raven": {
     "exclude_packages": ["certifi"]
   },
