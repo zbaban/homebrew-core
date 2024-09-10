@@ -4,6 +4,7 @@ class Dissent < Formula
   url "https://github.com/diamondburned/dissent/archive/refs/tags/v0.0.29.tar.gz"
   sha256 "1f3fb06b1621cb504500ad4112d74ac27024249c776e9d842438936b55e7ea00"
   license "GPL-3.0-or-later"
+  revision 1
   head "https://github.com/diamondburned/dissent.git", branch: "main"
 
   bottle do
