@@ -88,10 +88,11 @@ class OpenaiWhisper < Formula
     venv = virtualenv_create(libexec, python3)
 
     # We depend on pytorch, but that's a separate formula, so install a `.pth` file to link them.
-    # This needs to happen _before_ we try to install torchvision.
+    # This needs to happen _before_ we try to install openai-whisper.
+    # NOTE: This is an exception to our usual policy as building `pytorch` is complicated
     site_packages = Language::Python.site_packages(python3)
-    pytorch = Formula["pytorch"].opt_libexec
-    (venv.site_packages/"homebrew-pytorch.pth").write pytorch/site_packages
+    pth_contents = "import site; site.addsitedir('#{Formula["pytorch"].opt_libexec/site_packages}')\n"
+    (venv.site_packages/"homebrew-pytorch.pth").write pth_contents
 
     ENV["LLVM_CONFIG"] = Formula["llvm@15"].opt_bin/"llvm-config"
     venv.pip_install resources.reject { |r| r.name == "numba" }
