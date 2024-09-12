@@ -5,7 +5,7 @@ class ApacheArrow < Formula
   mirror "https://archive.apache.org/dist/arrow/arrow-17.0.0/apache-arrow-17.0.0.tar.gz"
   sha256 "9d280d8042e7cf526f8c28d170d93bfab65e50f94569f6a790982a878d8d898d"
   license "Apache-2.0"
-  revision 3
+  revision 4
   head "https://github.com/apache/arrow.git", branch: "main"
 
   bottle do
