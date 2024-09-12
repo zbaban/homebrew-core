@@ -91,6 +91,7 @@ class Ctags < Formula
     EOS
     system bin/"ctags", "-R", "."
     assert_match(/func.*test\.c/, File.read("tags"))
-    assert_match "+regex", shell_output("#{bin}/ctags --version")
+
+    assert_match version.to_s, shell_output("#{bin}/ctags --version")
   end
 end
